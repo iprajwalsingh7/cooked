@@ -29,8 +29,8 @@ A Next.js application that uses the Spotify API and Google Gemini AI to ruthless
 
 1.  Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/cooked-spotify-roast.git
-    cd cooked-spotify-roast
+    git clone https://github.com/iprajwalsingh7/cooked.git
+    cd cooked
     ```
 
 2.  Install dependencies:
