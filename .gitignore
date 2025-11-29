@@ -37,3 +37,5 @@ server.log
 gemini_test_output*.txt
 node_modules
 node_modules/ 
+node_modules/ 
+node_modules/ 
