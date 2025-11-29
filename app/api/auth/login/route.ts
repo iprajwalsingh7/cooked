@@ -4,6 +4,7 @@ import querystring from 'querystring';
 export async function GET() {
     const client_id = process.env.SPOTIFY_CLIENT_ID;
     const redirect_uri = process.env.SPOTIFY_REDIRECT_URI;
+    console.log('Login Route - Redirect URI:', redirect_uri);
 
     if (!client_id || !redirect_uri) {
         return NextResponse.json({ error: 'Missing Spotify credentials' }, { status: 500 });

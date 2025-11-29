@@ -133,65 +133,53 @@ __turbopack_context__.s([
     ()=>GET
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/server.js [app-route] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$headers$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/headers.js [app-route] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/axios/lib/axios.js [app-route] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$google$2f$generative$2d$ai$2f$dist$2f$index$2e$mjs__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/@google/generative-ai/dist/index.mjs [app-route] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$externals$5d2f$fs__$5b$external$5d$__$28$fs$2c$__cjs$29$__ = __turbopack_context__.i("[externals]/fs [external] (fs, cjs)");
+var __TURBOPACK__imported__module__$5b$externals$5d2f$path__$5b$external$5d$__$28$path$2c$__cjs$29$__ = __turbopack_context__.i("[externals]/path [external] (path, cjs)");
+;
 ;
 ;
 ;
 ;
 async function GET(request) {
-    const cookieStore = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$headers$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["cookies"])();
-    const sessionCookie = cookieStore.get('spotify_session');
-    console.log('Roast API - Received Cookies:', cookieStore.getAll());
-    console.log('Roast API - Session Cookie:', sessionCookie);
-    if (!sessionCookie || !sessionCookie.value) {
+    let accessToken = request.cookies.get('spotify_access_token')?.value;
+    console.log('Cookies received:', request.cookies.getAll());
+    console.log('Cookie Access Token:', accessToken);
+    if (!accessToken) {
+        const authHeader = request.headers.get('authorization');
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            accessToken = authHeader.split(' ')[1];
+            console.log('Using Access Token from Header');
+        }
+    }
+    if (!accessToken) {
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-            error: 'Unauthorized'
+            error: 'Unauthorized: Missing access token'
         }, {
             status: 401
         });
     }
-    let session;
     try {
-        session = JSON.parse(sessionCookie.value);
-    } catch (e) {
-        console.error('Failed to parse session cookie:', e);
-        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-            error: 'Invalid session'
-        }, {
-            status: 401
-        });
-    }
-    if (!session || !session.access_token) {
-        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-            error: 'Unauthorized'
-        }, {
-            status: 401
-        });
-    }
-    const { access_token } = session;
-    try {
-        // Fetch Spotify Data in parallel
         const [userProfile, topArtists, topTracks, recentlyPlayed] = await Promise.all([
             __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].get('https://api.spotify.com/v1/me', {
                 headers: {
-                    Authorization: `Bearer ${access_token}`
+                    Authorization: `Bearer ${accessToken}`
                 }
             }),
             __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].get('https://api.spotify.com/v1/me/top/artists?limit=10&time_range=medium_term', {
                 headers: {
-                    Authorization: `Bearer ${access_token}`
+                    Authorization: `Bearer ${accessToken}`
                 }
             }),
             __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].get('https://api.spotify.com/v1/me/top/tracks?limit=10&time_range=medium_term', {
                 headers: {
-                    Authorization: `Bearer ${access_token}`
+                    Authorization: `Bearer ${accessToken}`
                 }
             }),
             __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].get('https://api.spotify.com/v1/me/player/recently-played?limit=10', {
                 headers: {
-                    Authorization: `Bearer ${access_token}`
+                    Authorization: `Bearer ${accessToken}`
                 }
             })
         ]);
@@ -201,7 +189,6 @@ async function GET(request) {
             topTracks: topTracks.data.items.map((track)=>`${track.name} by ${track.artists[0].name}`).join(', '),
             recent: recentlyPlayed.data.items.map((item)=>`${item.track.name} by ${item.track.artists[0].name}`).join(', ')
         };
-        // Call Gemini
         const geminiApiKey = process.env.GEMINI_API_KEY;
         if (!geminiApiKey) {
             return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
@@ -212,7 +199,7 @@ async function GET(request) {
         }
         const genAI = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$google$2f$generative$2d$ai$2f$dist$2f$index$2e$mjs__$5b$app$2d$route$5d$__$28$ecmascript$29$__["GoogleGenerativeAI"](geminiApiKey);
         const model = genAI.getGenerativeModel({
-            model: 'gemini-pro'
+            model: 'gemini-2.0-flash-lite-preview-02-05'
         });
         const prompt = `
       You are a ruthless, witty, and hilarious music critic. Your job is to roast the user's music taste based on their Spotify history.
@@ -229,6 +216,7 @@ async function GET(request) {
       3. Make assumptions about their personality based on their music.
       4. Keep it under 200 words.
       5. Address them directly.
+      6. FORMATTING IS CRITICAL: Do NOT write a single block of text. Use short paragraphs (max 2-3 sentences). Separate paragraphs with double line breaks.
     `;
         const result = await model.generateContent(prompt);
         const response = await result.response;
@@ -237,9 +225,17 @@ async function GET(request) {
             roast: text
         });
     } catch (error) {
-        console.error('Error generating roast:', error.response?.data || error.message);
+        const errorMessage = error.response?.data ? JSON.stringify(error.response.data) : error.message;
+        console.error('Error generating roast:', errorMessage);
+        try {
+            const logPath = __TURBOPACK__imported__module__$5b$externals$5d2f$path__$5b$external$5d$__$28$path$2c$__cjs$29$__["default"].join(process.cwd(), 'server.log');
+            __TURBOPACK__imported__module__$5b$externals$5d2f$fs__$5b$external$5d$__$28$fs$2c$__cjs$29$__["default"].appendFileSync(logPath, `${new Date().toISOString()} - Error: ${errorMessage}\nStack: ${error.stack}\n\n`);
+        } catch (logError) {
+            console.error('Failed to write to log file:', logError);
+        }
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-            error: 'Failed to generate roast'
+            error: 'Failed to generate roast',
+            details: errorMessage
         }, {
             status: 500
         });

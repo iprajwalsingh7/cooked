@@ -1,35 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { getSession } from '@/lib/sessionStore';
 import fs from 'fs';
 import path from 'path';
 
 export async function GET(request: NextRequest) {
-    const authHeader = request.headers.get('authorization');
+    let accessToken = request.cookies.get('spotify_access_token')?.value;
+    console.log('Cookies received:', request.cookies.getAll());
+    console.log('Cookie Access Token:', accessToken);
 
-    console.log('Auth Header:', authHeader);
-
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return NextResponse.json({ error: 'Unauthorized: Missing or invalid Authorization header' }, { status: 401 });
+    if (!accessToken) {
+        const authHeader = request.headers.get('authorization');
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            accessToken = authHeader.split(' ')[1];
+            console.log('Using Access Token from Header');
+        }
     }
 
-    const sessionId = authHeader.split(' ')[1];
-    const session = getSession(sessionId);
-
-    if (!session || !session.access_token) {
-        return NextResponse.json({ error: 'Unauthorized: Invalid session' }, { status: 401 });
+    if (!accessToken) {
+        return NextResponse.json({ error: 'Unauthorized: Missing access token' }, { status: 401 });
     }
-
-    const { access_token } = session;
 
     try {
 
         const [userProfile, topArtists, topTracks, recentlyPlayed] = await Promise.all([
-            axios.get('https://api.spotify.com/v1/me', { headers: { Authorization: `Bearer ${access_token}` } }),
-            axios.get('https://api.spotify.com/v1/me/top/artists?limit=10&time_range=medium_term', { headers: { Authorization: `Bearer ${access_token}` } }),
-            axios.get('https://api.spotify.com/v1/me/top/tracks?limit=10&time_range=medium_term', { headers: { Authorization: `Bearer ${access_token}` } }),
-            axios.get('https://api.spotify.com/v1/me/player/recently-played?limit=10', { headers: { Authorization: `Bearer ${access_token}` } }),
+            axios.get('https://api.spotify.com/v1/me', { headers: { Authorization: `Bearer ${accessToken}` } }),
+            axios.get('https://api.spotify.com/v1/me/top/artists?limit=10&time_range=medium_term', { headers: { Authorization: `Bearer ${accessToken}` } }),
+            axios.get('https://api.spotify.com/v1/me/top/tracks?limit=10&time_range=medium_term', { headers: { Authorization: `Bearer ${accessToken}` } }),
+            axios.get('https://api.spotify.com/v1/me/player/recently-played?limit=10', { headers: { Authorization: `Bearer ${accessToken}` } }),
         ]);
 
         const dataSummary = {

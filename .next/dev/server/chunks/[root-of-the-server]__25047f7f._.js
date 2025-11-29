@@ -140,9 +140,7 @@ __turbopack_context__.s([
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/server.js [app-route] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/axios/lib/axios.js [app-route] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$cookie$2f$dist$2f$index$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/cookie/dist/index.js [app-route] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$externals$5d2f$querystring__$5b$external$5d$__$28$querystring$2c$__cjs$29$__ = __turbopack_context__.i("[externals]/querystring [external] (querystring, cjs)");
-;
 ;
 ;
 ;
@@ -174,28 +172,29 @@ async function GET(request) {
                 Authorization: 'Basic ' + Buffer.from(client_id + ':' + client_secret).toString('base64')
             }
         });
-        const { access_token, refresh_token } = response.data;
-        // Serialize the cookie
-        const cookie = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$cookie$2f$dist$2f$index$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["serialize"])('spotify_session', JSON.stringify({
-            access_token,
-            refresh_token
-        }), {
+        const { access_token, refresh_token, expires_in } = response.data;
+        console.log('Token exchange successful. Access Token:', access_token ? 'Present' : 'Missing');
+        console.log('Expires in:', expires_in);
+        const redirectUrl = new URL('/roast', request.url);
+        redirectUrl.searchParams.set('token', access_token);
+        const res = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].redirect(redirectUrl);
+        // Set cookies
+        res.cookies.set('spotify_access_token', access_token, {
             httpOnly: true,
-            secure: false,
-            maxAge: 60 * 60 * 24 * 7,
-            path: '/',
-            sameSite: 'lax'
+            secure: ("TURBOPACK compile-time value", "development") === 'production',
+            sameSite: 'lax',
+            maxAge: expires_in,
+            path: '/'
         });
-        console.log('Cookie Length:', cookie.length);
-        const testCookie = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$cookie$2f$dist$2f$index$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["serialize"])('test_cookie', 'hello_world', {
-            httpOnly: true,
-            secure: false,
-            path: '/',
-            sameSite: 'lax'
-        });
-        const res = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].redirect(new URL('/roast', request.url));
-        res.headers.append('Set-Cookie', cookie);
-        res.headers.append('Set-Cookie', testCookie);
+        console.log('Cookie set: spotify_access_token');
+        if (refresh_token) {
+            res.cookies.set('spotify_refresh_token', refresh_token, {
+                httpOnly: true,
+                secure: ("TURBOPACK compile-time value", "development") === 'production',
+                sameSite: 'lax',
+                path: '/'
+            });
+        }
         return res;
     } catch (error) {
         console.error('Error exchanging token:', error.response?.data || error.message);

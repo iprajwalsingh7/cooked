@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
 import querystring from 'querystring';
-import { saveSession } from '@/lib/sessionStore';
-import { v4 as uuidv4 } from 'uuid';
 
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
@@ -37,18 +35,35 @@ export async function GET(request: NextRequest) {
             }
         );
 
-        const { access_token, refresh_token } = response.data;
+        const { access_token, refresh_token, expires_in } = response.data;
+        console.log('Token exchange successful. Access Token:', access_token ? 'Present' : 'Missing');
+        console.log('Expires in:', expires_in);
 
-        // Generate Session ID
-        const sessionId = uuidv4();
+        const redirectUrl = new URL('/roast', request.url);
+        redirectUrl.searchParams.set('token', access_token);
+        const res = NextResponse.redirect(redirectUrl);
 
-        // Save to file store
-        saveSession(sessionId, { access_token, refresh_token });
+        // Set cookies
+        res.cookies.set('spotify_access_token', access_token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production', // Ensure this is false locally
+            sameSite: 'lax',
+            maxAge: expires_in,
+            path: '/',
+        });
+        console.log('Cookie set: spotify_access_token');
 
-        console.log('Session ID generated:', sessionId);
+        if (refresh_token) {
+            res.cookies.set('spotify_refresh_token', refresh_token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                path: '/',
+            });
+        }
 
-        // Redirect with session_id in query param (bypass cookies)
-        return NextResponse.redirect(new URL(`/roast?session_id=${sessionId}`, request.url));
+        return res;
+
     } catch (error: any) {
         console.error('Error exchanging token:', error.response?.data || error.message);
         console.error('Full Error:', error);

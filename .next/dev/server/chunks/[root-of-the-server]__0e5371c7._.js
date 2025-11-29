@@ -61,6 +61,7 @@ var __TURBOPACK__imported__module__$5b$externals$5d2f$querystring__$5b$external$
 async function GET() {
     const client_id = process.env.SPOTIFY_CLIENT_ID;
     const redirect_uri = process.env.SPOTIFY_REDIRECT_URI;
+    console.log('Login Route - Redirect URI:', redirect_uri);
     if (!client_id || !redirect_uri) {
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
             error: 'Missing Spotify credentials'

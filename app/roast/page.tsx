@@ -12,35 +12,27 @@ export default function RoastPage() {
 
     useEffect(() => {
         const fetchRoast = async () => {
-
             const urlParams = new URLSearchParams(window.location.search);
-            let sessionId = urlParams.get('session_id');
+            const tokenFromUrl = urlParams.get('token');
 
-            if (sessionId) {
-
-                localStorage.setItem('session_id', sessionId);
+            // Clean up URL
+            if (tokenFromUrl) {
                 window.history.replaceState({}, '', '/roast');
-            } else {
-
-                sessionId = localStorage.getItem('session_id');
-            }
-
-            if (!sessionId) {
-                setError('Unauthorized: No session found. Please try connecting again.');
-                setLoading(false);
-                return;
             }
 
             try {
+                const headers: HeadersInit = {};
+                if (tokenFromUrl) {
+                    headers['Authorization'] = `Bearer ${tokenFromUrl}`;
+                }
+
                 const res = await fetch('/api/roast', {
-                    headers: {
-                        'Authorization': `Bearer ${sessionId}`
-                    },
-                    cache: 'no-store'
+                    headers,
+                    cache: 'no-store',
+                    credentials: 'include'
                 });
 
                 if (res.status === 401) {
-                    localStorage.removeItem('session_id'); // Clear invalid session
                     setError('Unauthorized: Session expired or invalid.');
                     return;
                 }

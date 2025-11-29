@@ -27,27 +27,22 @@ function RoastPage() {
             const fetchRoast = {
                 "RoastPage.useEffect.fetchRoast": async ()=>{
                     const urlParams = new URLSearchParams(window.location.search);
-                    let sessionId = urlParams.get('session_id');
-                    if (sessionId) {
-                        localStorage.setItem('session_id', sessionId);
+                    const tokenFromUrl = urlParams.get('token');
+                    // Clean up URL
+                    if (tokenFromUrl) {
                         window.history.replaceState({}, '', '/roast');
-                    } else {
-                        sessionId = localStorage.getItem('session_id');
-                    }
-                    if (!sessionId) {
-                        setError('Unauthorized: No session found. Please try connecting again.');
-                        setLoading(false);
-                        return;
                     }
                     try {
+                        const headers = {};
+                        if (tokenFromUrl) {
+                            headers['Authorization'] = `Bearer ${tokenFromUrl}`;
+                        }
                         const res = await fetch('/api/roast', {
-                            headers: {
-                                'Authorization': `Bearer ${sessionId}`
-                            },
-                            cache: 'no-store'
+                            headers,
+                            cache: 'no-store',
+                            credentials: 'include'
                         });
                         if (res.status === 401) {
-                            localStorage.removeItem('session_id'); // Clear invalid session
                             setError('Unauthorized: Session expired or invalid.');
                             return;
                         }
@@ -75,7 +70,7 @@ function RoastPage() {
                 className: "absolute top-[-20%] right-[-10%] w-[60vw] h-[60vw] bg-red-500/10 rounded-full blur-[120px] pointer-events-none"
             }, void 0, false, {
                 fileName: "[project]/app/roast/page.tsx",
-                lineNumber: 65,
+                lineNumber: 57,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -87,7 +82,7 @@ function RoastPage() {
                             className: "w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mb-8"
                         }, void 0, false, {
                             fileName: "[project]/app/roast/page.tsx",
-                            lineNumber: 70,
+                            lineNumber: 62,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -95,7 +90,7 @@ function RoastPage() {
                             children: "Analyzing your questionable choices..."
                         }, void 0, false, {
                             fileName: "[project]/app/roast/page.tsx",
-                            lineNumber: 71,
+                            lineNumber: 63,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -103,13 +98,13 @@ function RoastPage() {
                             children: "Judging your top artists..."
                         }, void 0, false, {
                             fileName: "[project]/app/roast/page.tsx",
-                            lineNumber: 72,
+                            lineNumber: 64,
                             columnNumber: 25
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/roast/page.tsx",
-                    lineNumber: 69,
+                    lineNumber: 61,
                     columnNumber: 21
                 }, this) : error ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "text-center",
@@ -119,7 +114,7 @@ function RoastPage() {
                             children: "Error"
                         }, void 0, false, {
                             fileName: "[project]/app/roast/page.tsx",
-                            lineNumber: 76,
+                            lineNumber: 68,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -127,7 +122,7 @@ function RoastPage() {
                             children: error
                         }, void 0, false, {
                             fileName: "[project]/app/roast/page.tsx",
-                            lineNumber: 77,
+                            lineNumber: 69,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -136,13 +131,13 @@ function RoastPage() {
                             children: "Try Again"
                         }, void 0, false, {
                             fileName: "[project]/app/roast/page.tsx",
-                            lineNumber: 78,
+                            lineNumber: 70,
                             columnNumber: 25
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/roast/page.tsx",
-                    lineNumber: 75,
+                    lineNumber: 67,
                     columnNumber: 21
                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "animate-in fade-in slide-in-from-bottom-8 duration-700",
@@ -152,7 +147,7 @@ function RoastPage() {
                             children: "The Verdict"
                         }, void 0, false, {
                             fileName: "[project]/app/roast/page.tsx",
-                            lineNumber: 82,
+                            lineNumber: 74,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -166,12 +161,12 @@ function RoastPage() {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/roast/page.tsx",
-                                lineNumber: 84,
+                                lineNumber: 76,
                                 columnNumber: 29
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/roast/page.tsx",
-                            lineNumber: 83,
+                            lineNumber: 75,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -183,7 +178,7 @@ function RoastPage() {
                                     children: "Go Back"
                                 }, void 0, false, {
                                     fileName: "[project]/app/roast/page.tsx",
-                                    lineNumber: 90,
+                                    lineNumber: 82,
                                     columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -192,30 +187,30 @@ function RoastPage() {
                                     children: "Roast Me Again"
                                 }, void 0, false, {
                                     fileName: "[project]/app/roast/page.tsx",
-                                    lineNumber: 93,
+                                    lineNumber: 85,
                                     columnNumber: 29
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/roast/page.tsx",
-                            lineNumber: 89,
+                            lineNumber: 81,
                             columnNumber: 25
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/roast/page.tsx",
-                    lineNumber: 81,
+                    lineNumber: 73,
                     columnNumber: 21
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/roast/page.tsx",
-                lineNumber: 67,
+                lineNumber: 59,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/roast/page.tsx",
-        lineNumber: 63,
+        lineNumber: 55,
         columnNumber: 9
     }, this);
 }
