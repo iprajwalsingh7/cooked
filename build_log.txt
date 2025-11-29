@@ -1,0 +1,65 @@
+
+> cooked-spotifyroast@1.0.0 build
+> next build
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   ▲ Next.js 16.0.5 (Turbopack)
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+
+> Build error occurred
+Error: Turbopack build failed with 6 errors:
+./app/api/auth/callback/route.ts
+Specified module format (CommonJs) is not matching the module format of the source code (EcmaScript Modules)
+The CommonJs module format was specified in the package.json that is affecting this source file or by using an special extension, but Ecmascript import/export syntax is used in the source code.
+The module was automatically converted to an EcmaScript module, but that is in conflict with the specified module format. Either change the "type" field in the package.json or replace EcmaScript import/export syntax with CommonJs syntas in the source file.
+In some cases EcmaScript import/export syntax is added by an transform and isn't actually part of the source code. In these cases revisit transformation options to inject the correct syntax.
+
+
+./app/api/auth/login/route.ts
+Specified module format (CommonJs) is not matching the module format of the source code (EcmaScript Modules)
+The CommonJs module format was specified in the package.json that is affecting this source file or by using an special extension, but Ecmascript import/export syntax is used in the source code.
+The module was automatically converted to an EcmaScript module, but that is in conflict with the specified module format. Either change the "type" field in the package.json or replace EcmaScript import/export syntax with CommonJs syntas in the source file.
+In some cases EcmaScript import/export syntax is added by an transform and isn't actually part of the source code. In these cases revisit transformation options to inject the correct syntax.
+
+
+./app/api/roast/route.ts
+Specified module format (CommonJs) is not matching the module format of the source code (EcmaScript Modules)
+The CommonJs module format was specified in the package.json that is affecting this source file or by using an special extension, but Ecmascript import/export syntax is used in the source code.
+The module was automatically converted to an EcmaScript module, but that is in conflict with the specified module format. Either change the "type" field in the package.json or replace EcmaScript import/export syntax with CommonJs syntas in the source file.
+In some cases EcmaScript import/export syntax is added by an transform and isn't actually part of the source code. In these cases revisit transformation options to inject the correct syntax.
+
+
+./app/layout.tsx
+Specified module format (CommonJs) is not matching the module format of the source code (EcmaScript Modules)
+The CommonJs module format was specified in the package.json that is affecting this source file or by using an special extension, but Ecmascript import/export syntax is used in the source code.
+The module was automatically converted to an EcmaScript module, but that is in conflict with the specified module format. Either change the "type" field in the package.json or replace EcmaScript import/export syntax with CommonJs syntas in the source file.
+In some cases EcmaScript import/export syntax is added by an transform and isn't actually part of the source code. In these cases revisit transformation options to inject the correct syntax.
+
+
+./app/page.tsx
+Specified module format (CommonJs) is not matching the module format of the source code (EcmaScript Modules)
+The CommonJs module format was specified in the package.json that is affecting this source file or by using an special extension, but Ecmascript import/export syntax is used in the source code.
+The module was automatically converted to an EcmaScript module, but that is in conflict with the specified module format. Either change the "type" field in the package.json or replace EcmaScript import/export syntax with CommonJs syntas in the source file.
+In some cases EcmaScript import/export syntax is added by an transform and isn't actually part of the source code. In these cases revisit transformation options to inject the correct syntax.
+
+
+./app/roast/page.tsx
+Specified module format (CommonJs) is not matching the module format of the source code (EcmaScript Modules)
+The CommonJs module format was specified in the package.json that is affecting this source file or by using an special extension, but Ecmascript import/export syntax is used in the source code.
+The module was automatically converted to an EcmaScript module, but that is in conflict with the specified module format. Either change the "type" field in the package.json or replace EcmaScript import/export syntax with CommonJs syntas in the source file.
+In some cases EcmaScript import/export syntax is added by an transform and isn't actually part of the source code. In these cases revisit transformation options to inject the correct syntax.
+
+Import traces:
+  Client Component Browser:
+    ./app/roast/page.tsx [Client Component Browser]
+    ./app/roast/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/roast/page.tsx [Client Component SSR]
+    ./app/roast/page.tsx [Server Component]
+
+
+    at ignore-listed frames

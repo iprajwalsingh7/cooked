@@ -1,0 +1,7 @@
+{
+  "/api/auth/callback/route": "app/api/auth/callback/route.js",
+  "/api/auth/login/route": "app/api/auth/login/route.js",
+  "/api/roast/route": "app/api/roast/route.js",
+  "/page": "app/page.js",
+  "/roast/page": "app/roast/page.js"
+}
